@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NonstopOrder — Self-Ordering Kiosks for Food Trucks</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --navy:    #0B1628;
+  --navy2:   #142240;
+  --navy3:   #1E3A6E;
+  --amber:   #F5A623;
+  --amber2:  #E09010;
+  --amber3:  #FFC04D;
+  --white:   #FFFFFF;
+  --silver:  #C8D4E8;
+  --silver2: #8A9BB8;
+  --light:   #F4F7FC;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--navy);
+  color: var(--white);
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 60px;
+  background: rgba(11,22,40,0.9);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(245,166,35,0.1);
+}
+
+.nav-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: 22px;
+  color: var(--white); letter-spacing: -0.02em;
+}
+.nav-logo span { color: var(--amber); }
+
+.nav-cta {
+  background: var(--amber); color: var(--navy);
+  font-family: 'Syne', sans-serif; font-weight: 700;
+  font-size: 13px; padding: 10px 24px;
+  border: none; cursor: pointer; letter-spacing: 0.05em;
+  text-transform: uppercase; transition: background 0.2s;
+  text-decoration: none;
+}
+.nav-cta:hover { background: var(--amber3); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  padding: 120px 60px 80px;
+  position: relative; overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute; top: -200px; right: -200px;
+  width: 700px; height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,166,35,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(245,166,35,0.3), transparent);
+}
+
+/* Animated grid background */
+.hero-grid {
+  position: absolute; inset: 0; opacity: 0.03;
+  background-image:
+    linear-gradient(rgba(245,166,35,1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,166,35,1) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
+.hero-content {
+  max-width: 680px;
+  position: relative; z-index: 2;
+  animation: fadeUp 0.9s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--amber);
+  margin-bottom: 28px;
+  animation: fadeUp 0.9s 0.1s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+.hero-eyebrow::before {
+  content: '';
+  width: 32px; height: 2px;
+  background: var(--amber);
+}
+
+.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(46px, 6vw, 80px);
+  font-weight: 800; line-height: 1.0;
+  letter-spacing: -0.03em;
+  margin-bottom: 28px;
+  animation: fadeUp 0.9s 0.15s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+.hero-title em {
+  font-style: normal; color: var(--amber);
+  display: block;
+}
+
+.hero-sub {
+  font-size: 18px; font-weight: 300; color: var(--silver);
+  line-height: 1.7; max-width: 520px;
+  margin-bottom: 48px;
+  animation: fadeUp 0.9s 0.2s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+.hero-actions {
+  display: flex; gap: 16px; flex-wrap: wrap;
+  animation: fadeUp 0.9s 0.25s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+.btn-primary {
+  background: var(--amber); color: var(--navy);
+  font-family: 'Syne', sans-serif; font-weight: 700;
+  font-size: 14px; padding: 16px 36px;
+  border: none; cursor: pointer;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  transition: all 0.2s; text-decoration: none;
+  display: inline-block;
+}
+.btn-primary:hover { background: var(--amber3); transform: translateY(-2px); }
+
+.btn-secondary {
+  background: transparent; color: var(--silver);
+  font-family: 'Syne', sans-serif; font-weight: 600;
+  font-size: 14px; padding: 16px 36px;
+  border: 1px solid rgba(200,212,232,0.2); cursor: pointer;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  transition: all 0.2s; text-decoration: none;
+  display: inline-block;
+}
+.btn-secondary:hover { border-color: var(--amber); color: var(--amber); }
+
+/* Hero right — kiosk illustration */
+.hero-visual {
+  position: absolute; right: 60px; top: 50%;
+  transform: translateY(-50%);
+  width: 340px;
+  animation: fadeUp 0.9s 0.3s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+.kiosk-illustration {
+  width: 100%;
+  position: relative;
+}
+
+.kiosk-screen-wrap {
+  background: var(--navy2);
+  border: 1px solid rgba(245,166,35,0.15);
+  border-radius: 4px;
+  padding: 3px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 60px rgba(245,166,35,0.06);
+}
+
+.kiosk-screen {
+  background: var(--navy);
+  aspect-ratio: 9/16;
+  border-radius: 2px;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+}
+
+.ks-header {
+  background: var(--navy2);
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid rgba(245,166,35,0.15);
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+
+.ks-logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px; font-weight: 800; color: var(--amber);
+  letter-spacing: 0.05em;
+}
+.ks-logo span { color: var(--white); }
+
+.ks-tag {
+  font-size: 8px; color: var(--silver2);
+  letter-spacing: 0.15em; text-transform: uppercase;
+}
+
+.ks-body {
+  flex: 1; padding: 12px 10px; display: flex; flex-direction: column; gap: 8px;
+}
+
+.ks-cat {
+  font-size: 7px; color: var(--amber);
+  letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600;
+}
+
+.ks-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+}
+
+.ks-item {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 3px; padding: 8px 6px;
+  display: flex; flex-direction: column; gap: 3px;
+}
+.ks-item-emoji { font-size: 14px; }
+.ks-item-name { font-size: 7px; color: var(--white); font-weight: 500; }
+.ks-item-price { font-size: 8px; color: var(--amber); font-weight: 700; }
+
+.ks-footer {
+  background: var(--amber);
+  padding: 10px;
+  text-align: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 8px; font-weight: 700;
+  color: var(--navy); text-transform: uppercase; letter-spacing: 0.1em;
+}
+
+/* Tyro badge */
+.tyro-badge {
+  position: absolute; bottom: -20px; right: -20px;
+  background: var(--navy2);
+  border: 1px solid rgba(245,166,35,0.2);
+  padding: 10px 14px;
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.tyro-dot {
+  width: 8px; height: 8px;
+  background: var(--amber); border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.tyro-text { font-size: 11px; color: var(--silver); font-weight: 500; }
+.tyro-text strong { color: var(--amber); }
+
+/* ── STATS BAR ── */
+.stats-bar {
+  background: var(--navy2);
+  border-top: 1px solid rgba(245,166,35,0.1);
+  border-bottom: 1px solid rgba(245,166,35,0.1);
+  padding: 40px 60px;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+}
+
+.stat { text-align: center; }
+
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 42px; font-weight: 800;
+  color: var(--amber); line-height: 1;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  font-size: 12px; color: var(--silver2);
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+
+/* ── HOW IT WORKS ── */
+.section {
+  padding: 100px 60px;
+}
+
+.section-eyebrow {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--amber);
+  margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+}
+.section-eyebrow::before { content: ''; width: 24px; height: 2px; background: var(--amber); }
+
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 800; line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 60px;
+}
+
+.section-title em { font-style: normal; color: var(--amber); }
+
+/* Steps */
+.steps {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 0;
+  position: relative;
+}
+
+.steps::before {
+  content: '';
+  position: absolute; top: 32px; left: 10%; right: 10%; height: 2px;
+  background: linear-gradient(90deg, var(--navy3), var(--amber), var(--navy3));
+  z-index: 0;
+}
+
+.step {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; position: relative; z-index: 1; padding: 0 8px;
+}
+
+.step-circle {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--navy2); border: 2px solid rgba(245,166,35,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; margin-bottom: 20px;
+  transition: all 0.3s;
+}
+
+.step:hover .step-circle {
+  border-color: var(--amber);
+  background: rgba(245,166,35,0.08);
+  transform: translateY(-4px);
+}
+
+.step-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px; font-weight: 700; color: var(--amber);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.step-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px; font-weight: 700; color: var(--white);
+  margin-bottom: 8px;
+}
+
+.step-desc {
+  font-size: 12px; color: var(--silver2); line-height: 1.6;
+}
+
+/* ── FEATURES ── */
+.features-section {
+  padding: 100px 60px;
+  background: var(--navy2);
+  border-top: 1px solid rgba(245,166,35,0.08);
+  border-bottom: 1px solid rgba(245,166,35,0.08);
+}
+
+.features-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+}
+
+.feature {
+  padding: 40px 36px;
+  background: var(--navy);
+  border: 1px solid rgba(255,255,255,0.04);
+  transition: all 0.3s;
+  position: relative; overflow: hidden;
+}
+
+.feature::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--amber);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.3s;
+}
+
+.feature:hover::before { transform: scaleX(1); }
+.feature:hover { background: rgba(245,166,35,0.03); }
+
+.feature-icon {
+  font-size: 32px; margin-bottom: 20px;
+  display: block;
+}
+
+.feature-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px; font-weight: 700; color: var(--white);
+  margin-bottom: 12px;
+}
+
+.feature-desc {
+  font-size: 14px; color: var(--silver2); line-height: 1.7;
+}
+
+/* ── ZERO COST SECTION ── */
+.zero-cost {
+  padding: 100px 60px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+  align-items: center;
+}
+
+.zero-cost-badge {
+  background: rgba(245,166,35,0.08);
+  border: 1px solid rgba(245,166,35,0.2);
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 10px 20px; margin-bottom: 24px;
+  font-size: 12px; color: var(--amber); font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+
+.zero-cost-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(30px, 3.5vw, 48px);
+  font-weight: 800; line-height: 1.1;
+  letter-spacing: -0.02em; margin-bottom: 24px;
+}
+
+.zero-cost-desc {
+  font-size: 16px; color: var(--silver); line-height: 1.8;
+  margin-bottom: 40px; font-weight: 300;
+}
+
+.zero-list {
+  list-style: none; display: flex; flex-direction: column; gap: 14px;
+}
+
+.zero-list li {
+  display: flex; align-items: center; gap: 14px;
+  font-size: 15px; color: var(--silver);
+}
+
+.zero-list li::before {
+  content: '✓';
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(245,166,35,0.1); border: 1px solid rgba(245,166,35,0.3);
+  color: var(--amber); font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Right side cards */
+.zero-cards {
+  display: flex; flex-direction: column; gap: 16px;
+}
+
+.zero-card {
+  background: var(--navy2);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 24px 28px;
+  display: flex; align-items: center; gap: 20px;
+  transition: border-color 0.3s;
+}
+.zero-card:hover { border-color: rgba(245,166,35,0.25); }
+
+.zero-card-icon { font-size: 28px; flex-shrink: 0; }
+
+.zero-card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px; font-weight: 700; color: var(--white);
+  margin-bottom: 4px;
+}
+.zero-card-desc { font-size: 13px; color: var(--silver2); }
+
+/* ── CTA SECTION ── */
+.cta-section {
+  padding: 100px 60px;
+  background: var(--navy2);
+  text-align: center;
+  border-top: 1px solid rgba(245,166,35,0.1);
+  position: relative; overflow: hidden;
+}
+
+.cta-section::before {
+  content: '';
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(245,166,35,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cta-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 800; letter-spacing: -0.03em;
+  margin-bottom: 20px; position: relative;
+}
+
+.cta-sub {
+  font-size: 17px; color: var(--silver); font-weight: 300;
+  margin-bottom: 48px; max-width: 500px; margin-left: auto; margin-right: auto;
+  line-height: 1.7;
+}
+
+.cta-form {
+  display: flex; gap: 0; max-width: 480px; margin: 0 auto 20px;
+}
+
+.cta-input {
+  flex: 1; padding: 16px 20px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-right: none;
+  color: var(--white); font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.cta-input:focus { border-color: rgba(245,166,35,0.4); }
+.cta-input::placeholder { color: var(--silver2); }
+
+.cta-submit {
+  background: var(--amber); color: var(--navy);
+  font-family: 'Syne', sans-serif; font-weight: 700;
+  font-size: 13px; padding: 16px 28px;
+  border: none; cursor: pointer;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  transition: background 0.2s; white-space: nowrap;
+}
+.cta-submit:hover { background: var(--amber3); }
+
+.cta-note { font-size: 12px; color: var(--silver2); }
+
+/* ── FOOTER ── */
+footer {
+  padding: 40px 60px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.footer-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: 18px;
+  color: var(--white);
+}
+.footer-logo span { color: var(--amber); }
+
+.footer-copy { font-size: 12px; color: var(--silver2); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+  .hero-visual { display: none; }
+  .stats-bar { grid-template-columns: repeat(2, 1fr); }
+  .steps { grid-template-columns: repeat(3, 1fr); gap: 40px; }
+  .steps::before { display: none; }
+  .features-grid { grid-template-columns: repeat(2, 1fr); }
+  .zero-cost { grid-template-columns: 1fr; gap: 48px; }
+}
+
+@media (max-width: 640px) {
+  nav { padding: 16px 24px; }
+  .hero { padding: 100px 24px 60px; }
+  .stats-bar { grid-template-columns: repeat(2, 1fr); padding: 40px 24px; gap: 24px; }
+  .section, .features-section, .zero-cost, .cta-section { padding: 60px 24px; }
+  .steps { grid-template-columns: 1fr 1fr; }
+  .features-grid { grid-template-columns: 1fr; }
+  footer { flex-direction: column; gap: 12px; text-align: center; padding: 32px 24px; }
+  .cta-form { flex-direction: column; }
+  .cta-input { border-right: 1px solid rgba(255,255,255,0.1); border-bottom: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Nonstop<span>Order</span></div>
+  <a href="#contact" class="nav-cta">Get Started</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">AI-Powered Self-Ordering</div>
+    <h1 class="hero-title">
+      No more queues.
+      <em>No more missed orders.</em>
+    </h1>
+    <p class="hero-sub">NonstopOrder brings McDonald's-style self-ordering kiosks to food trucks and caravans — at zero cost to your business.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">Get Your Free Kiosk</a>
+      <a href="#how" class="btn-secondary">See How It Works</a>
+    </div>
+  </div>
+
+  <!-- Kiosk Visual -->
+  <div class="hero-visual">
+    <div class="kiosk-illustration">
+      <div class="kiosk-screen-wrap">
+        <div class="kiosk-screen">
+          <div class="ks-header">
+            <div class="ks-logo">Nonstop<span>Order</span></div>
+            <div class="ks-tag">Touch to order</div>
+          </div>
+          <div class="ks-body">
+            <div class="ks-cat">Popular</div>
+            <div class="ks-grid">
+              <div class="ks-item">
+                <span class="ks-item-emoji">🌯</span>
+                <span class="ks-item-name">Doner Wrap</span>
+                <span class="ks-item-price">$14.50</span>
+              </div>
+              <div class="ks-item">
+                <span class="ks-item-emoji">🍗</span>
+                <span class="ks-item-name">Chicken Box</span>
+                <span class="ks-item-price">$16.00</span>
+              </div>
+              <div class="ks-item">
+                <span class="ks-item-emoji">🍟</span>
+                <span class="ks-item-name">Chips</span>
+                <span class="ks-item-price">$5.00</span>
+              </div>
+              <div class="ks-item">
+                <span class="ks-item-emoji">🥤</span>
+                <span class="ks-item-name">Drink</span>
+                <span class="ks-item-price">$4.00</span>
+              </div>
+            </div>
+          </div>
+          <div class="ks-footer">View Full Menu →</div>
+        </div>
+      </div>
+      <div class="tyro-badge">
+        <div class="tyro-dot"></div>
+        <div class="tyro-text">Payments by <strong>Tyro</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-num">3,500+</div>
+    <div class="stat-label">Food Trucks in Melbourne</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">40%</div>
+    <div class="stat-label">Customers Lost to Queues</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">$0</div>
+    <div class="stat-label">Cost to Your Business</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">5 min</div>
+    <div class="stat-label">Setup Time</div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <div class="section-eyebrow">How It Works</div>
+  <h2 class="section-title">From order to kitchen<br><em>in seconds.</em></h2>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-circle">👆</div>
+      <div class="step-num">Step 1</div>
+      <div class="step-title">Customer Orders</div>
+      <div class="step-desc">Touchscreen kiosk outside your truck</div>
+    </div>
+    <div class="step">
+      <div class="step-circle">💳</div>
+      <div class="step-num">Step 2</div>
+      <div class="step-title">Tap to Pay</div>
+      <div class="step-desc">Tyro EFTPOS terminal built-in</div>
+    </div>
+    <div class="step">
+      <div class="step-circle">🖨️</div>
+      <div class="step-num">Step 3</div>
+      <div class="step-title">Receipt Prints</div>
+      <div class="step-desc">Unique order number on every receipt</div>
+    </div>
+    <div class="step">
+      <div class="step-circle">📺</div>
+      <div class="step-num">Step 4</div>
+      <div class="step-title">Kitchen Alert</div>
+      <div class="step-desc">Your kitchen screen shows the order instantly</div>
+    </div>
+    <div class="step">
+      <div class="step-circle">✅</div>
+      <div class="step-num">Step 5</div>
+      <div class="step-title">Order Ready</div>
+      <div class="step-desc">Staff calls order number or SMS sent</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section" id="features">
+  <div class="section-eyebrow">Built for Outdoor</div>
+  <h2 class="section-title">Hardware made for<br><em>Australian conditions.</em></h2>
+
+  <div class="features-grid">
+    <div class="feature">
+      <span class="feature-icon">💧</span>
+      <div class="feature-title">IP65 Waterproof</div>
+      <div class="feature-desc">Rain, dust, and heat — the kiosk keeps running through Australian weather, all day every day.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">☀️</span>
+      <div class="feature-title">3000 Nits Brightness</div>
+      <div class="feature-desc">Crystal clear in direct sunlight. Customers can read the menu even on the brightest summer days.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">📶</span>
+      <div class="feature-title">4G SIM Built-In</div>
+      <div class="feature-desc">No WiFi needed. The kiosk connects over 4G — works at any location, any market, any event.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">🌐</span>
+      <div class="feature-title">Multilingual</div>
+      <div class="feature-desc">English, Turkish, Arabic and more. Serve Melbourne's diverse communities in their own language.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">🖨️</span>
+      <div class="feature-title">Built-In Printer</div>
+      <div class="feature-desc">Thermal receipt printer prints order numbers automatically — no extra hardware needed.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">📊</span>
+      <div class="feature-title">Real-Time Analytics</div>
+      <div class="feature-desc">See your orders, revenue, and peak times live — from your phone, anywhere.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ZERO COST -->
+<section class="zero-cost" id="pricing">
+  <div>
+    <div class="zero-cost-badge">💚 Zero Cost Model</div>
+    <h2 class="zero-cost-title">We give you the kiosk.<br>You keep the customers.</h2>
+    <p class="zero-cost-desc">No monthly fees. No setup costs. No hardware charges. NonstopOrder is completely free for your business — we earn a small commission from payment processing only.</p>
+    <ul class="zero-list">
+      <li>Kiosk hardware & installation — free</li>
+      <li>Software platform & updates — free</li>
+      <li>Menu setup & onboarding — free</li>
+      <li>Kitchen display screen — free</li>
+      <li>Ongoing technical support — free</li>
+    </ul>
+  </div>
+
+  <div class="zero-cards">
+    <div class="zero-card">
+      <div class="zero-card-icon">🚀</div>
+      <div>
+        <div class="zero-card-title">Ready in days, not weeks</div>
+        <div class="zero-card-desc">We handle everything — delivery, setup, menu entry. You just serve the food.</div>
+      </div>
+    </div>
+    <div class="zero-card">
+      <div class="zero-card-icon">📈</div>
+      <div>
+        <div class="zero-card-title">Higher average order value</div>
+        <div class="zero-card-desc">Kiosks upsell automatically — "Add chips for $5?" — proven to increase revenue.</div>
+      </div>
+    </div>
+    <div class="zero-card">
+      <div class="zero-card-icon">👨‍🍳</div>
+      <div>
+        <div class="zero-card-title">Less staff, more output</div>
+        <div class="zero-card-desc">No one stuck taking orders. Your team focuses on cooking and service.</div>
+      </div>
+    </div>
+    <div class="zero-card">
+      <div class="zero-card-icon">💳</div>
+      <div>
+        <div class="zero-card-title">Powered by Tyro EFTPOS</div>
+        <div class="zero-card-desc">Australia's trusted payment partner — fast, reliable, competitive rates.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <h2 class="cta-title">Ready to stop the queue?</h2>
+  <p class="cta-sub">Join our pilot program — free kiosk, zero commitment, real results.</p>
+
+  <div class="cta-form">
+    <input type="email" class="cta-input" placeholder="Your email address">
+    <button class="cta-submit">Get My Free Kiosk</button>
+  </div>
+  <p class="cta-note">No lock-in contracts · Free installation · Live in days</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Nonstop<span>Order</span></div>
+  <div class="footer-copy">© 2026 NonstopOrder · Melbourne, Australia · nonstoporder.com</div>
+</footer>
+
+</body>
+</html>
