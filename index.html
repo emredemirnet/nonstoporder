@@ -60,7 +60,7 @@ nav {
 /* ── HERO ── */
 .hero {
   min-height: 100vh;
-  display: flex; align-items: center;
+  display: flex; align-items: center; justify-content: center;
   padding: 120px 60px 80px;
   position: relative; overflow: hidden;
 }
@@ -92,7 +92,8 @@ nav {
 }
 
 .hero-content {
-  max-width: 680px;
+  max-width: 900px;
+  width: 100%;
   position: relative; z-index: 2;
   animation: fadeUp 0.9s cubic-bezier(0.22,1,0.36,1) both;
 }
@@ -100,6 +101,20 @@ nav {
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(30px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+.hero-pills {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  margin-bottom: 40px;
+  animation: fadeUp 0.9s 0.22s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+.hero-pill {
+  background: rgba(245,166,35,0.08);
+  border: 1px solid rgba(245,166,35,0.2);
+  color: var(--silver);
+  font-size: 13px; padding: 8px 16px;
+  letter-spacing: 0.03em;
 }
 
 .hero-eyebrow {
@@ -118,7 +133,7 @@ nav {
 
 .hero-title {
   font-family: 'Syne', sans-serif;
-  font-size: clamp(46px, 6vw, 80px);
+  font-size: clamp(56px, 7vw, 100px);
   font-weight: 800; line-height: 1.0;
   letter-spacing: -0.03em;
   margin-bottom: 28px;
@@ -131,8 +146,8 @@ nav {
 }
 
 .hero-sub {
-  font-size: 18px; font-weight: 300; color: var(--silver);
-  line-height: 1.7; max-width: 520px;
+  font-size: 22px; font-weight: 300; color: var(--silver);
+  line-height: 1.7; max-width: 800px;
   margin-bottom: 48px;
   animation: fadeUp 0.9s 0.2s cubic-bezier(0.22,1,0.36,1) both;
 }
@@ -555,7 +570,7 @@ footer {
 
 /* ── RESPONSIVE ── */
 @media (max-width: 1024px) {
-  .hero-visual { display: none; }
+  .hero-visual { display: none; } /* mobile only */
   .stats-bar { grid-template-columns: repeat(2, 1fr); }
   .steps { grid-template-columns: repeat(3, 1fr); gap: 40px; }
   .steps::before { display: none; }
@@ -595,6 +610,14 @@ footer {
       <em>No more missed orders.</em>
     </h1>
     <p class="hero-sub">NonstopOrder brings McDonald's-style self-ordering kiosks to food trucks and caravans — at zero cost to your business.</p>
+    <div class="hero-pills">
+      <div class="hero-pill">💧 IP65 Waterproof</div>
+      <div class="hero-pill">☀️ 3000 Nits</div>
+      <div class="hero-pill">📶 4G Built-In</div>
+      <div class="hero-pill">🖨️ Receipt Printer</div>
+      <div class="hero-pill">💳 Tyro EFTPOS</div>
+      <div class="hero-pill">🌐 Multilingual</div>
+    </div>
     <div class="hero-actions">
       <a href="#contact" class="btn-primary">Get Your Free Kiosk</a>
       <a href="#how" class="btn-secondary">See How It Works</a>
